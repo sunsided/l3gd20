@@ -21,7 +21,7 @@ pub struct Characteristics {
     pub rate_noise_density: f32,
 }
 
-impl Default for Characteristics {
+impl Default for Characteristics {s""
     fn default() -> Self {
         #[allow(clippy::excessive_precision)]
         Self {
