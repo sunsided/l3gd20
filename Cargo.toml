@@ -1,0 +1,32 @@
+[package]
+name = "l3gd20-ng"
+version = "0.1.0-alpha.1"
+authors = ["Markus Mayer <widemeadows@gmail.com>"]
+categories = ["embedded", "hardware-support", "no-std"]
+description = "A platform agnostic SPI driver to interface with the L3GD2 gyroscope"
+keywords = ["embedded-hal-driver", "gyroscope", "MEMS", "IMU", "l3gd20"]
+license = "EUPL-1.2 OR MIT OR Apache-2.0"
+homepage = "https://github.com/sunsided/l3gd20"
+repository = "https://github.com/sunsided/l3gd20"
+edition = "2021"
+rust-version = "1.67"
+
+[features]
+default = []
+defmt = ["dep:defmt", "l3gd20-registers/defmt"]
+
+[dependencies]
+chip-select = { version = "0.2.0", default-features = false, features = ["hal-0_2"] }
+defmt = { version = "0.3.8", optional = true }
+embedded-hal = "0.2.7"
+l3gd20-registers = "0.1.0"
+
+[dev-dependencies]
+test-format = "0.1.0"
+
+[patch.crates-io]
+# l3gd20-registers = { git = "https://github.com/sunsided/l3gd20-registers" }
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
