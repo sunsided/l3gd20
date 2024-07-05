@@ -202,8 +202,34 @@ where
         Ok(ident.temp())
     }
 
+    /// Fetches X, Y and Z-axis data off the sensor.
+    pub fn xyz_raw(&mut self) -> Result<I16x3, E>
+    where
+        CS: ChipSelectGuarded,
+    {
+        let _guard = self.cs.select_guard();
+
+        // The registers come in the order XL (0x28), XH, YL, YH, ZL, ZH (0x2D)
+        let command = Self::read_multi_cmd(*OutXLow::REGISTER_ADDRESS);
+        let mut buffer = [command, 0, 0, 0, 0, 0, 0];
+        self.spi.transfer(&mut buffer)?;
+
+        let xlo = OutXLow::from_bits(buffer[0]);
+        let xhi = OutXHigh::from_bits(buffer[1]);
+        let ylo = OutYLow::from_bits(buffer[2]);
+        let yhi = OutYHigh::from_bits(buffer[3]);
+        let zlo = OutZLow::from_bits(buffer[4]);
+        let zhi = OutZHigh::from_bits(buffer[5]);
+
+        let x = xhi + xlo;
+        let y = yhi + ylo;
+        let z = zhi + zlo;
+
+        Ok(I16x3::new(x, y, z))
+    }
+
     /// Fetches all data off the sensor.
-    pub fn raw_data(&mut self) -> Result<SensorData, E>
+    pub fn data_raw(&mut self) -> Result<SensorData, E>
     where
         CS: ChipSelectGuarded,
     {

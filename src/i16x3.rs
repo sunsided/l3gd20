@@ -9,6 +9,14 @@ pub struct I16x3 {
     pub z: i16,
 }
 
+impl I16x3 {
+    /// Creates a new instance of the [`I16x3`] struct from its components.
+    #[must_use]
+    pub fn new(x: i16, y: i16, z: i16) -> Self {
+        Self { x, y, z }
+    }
+}
+
 #[cfg(feature = "defmt")]
 #[cfg_attr(docsrs, doc(cfg(feature = "defmt")))]
 impl defmt::Format for I16x3 {
