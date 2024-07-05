@@ -1,4 +1,5 @@
 use crate::{I16x3, Reading};
+use l3gd20_registers::StatusRegister;
 
 /// Sensor data.
 #[derive(Debug, Clone)]
@@ -15,6 +16,20 @@ pub struct SensorData {
 }
 
 impl SensorData {
+    /// Maps sensor readings into a [`SensorData`] structure.
+    pub fn new<S>(temperature: u8, x: i16, y: i16, z: i16, status: S) -> Self
+    where
+        S: core::borrow::Borrow<StatusRegister>,
+    {
+        let status = status.borrow();
+        Self {
+            temperature,
+            x: Reading::map(x, status.x_da(), status.x_overrun()),
+            y: Reading::map(y, status.y_da(), status.y_overrun()),
+            z: Reading::map(z, status.z_da(), status.z_overrun()),
+        }
+    }
+
     /// Indicates whether any reading is stale.
     #[must_use]
     pub fn stale(&self) -> bool {

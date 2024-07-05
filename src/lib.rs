@@ -215,7 +215,7 @@ where
         self.spi.transfer(&mut buffer)?;
 
         let temp = TemperatureRegister::from_bits(buffer[1]);
-        let _status = StatusRegister::from_bits(buffer[2]); // TODO: Use status
+        let status = StatusRegister::from_bits(buffer[2]);
         let xlo = OutXLow::from_bits(buffer[3]);
         let xhi = OutXHigh::from_bits(buffer[4]);
         let ylo = OutYLow::from_bits(buffer[5]);
@@ -227,12 +227,7 @@ where
         let y = yhi + ylo;
         let z = zhi + zlo;
 
-        Ok(SensorData {
-            temperature: temp.temp(),
-            x: Reading::new_fresh(x),
-            y: Reading::new_fresh(y),
-            z: Reading::new_fresh(z),
-        })
+        Ok(SensorData::new(temp.temp(), x, y, z, status))
     }
 
     /// Creates a read command for a given address. Does not auto-increment the address afterward.

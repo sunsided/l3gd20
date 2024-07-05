@@ -35,6 +35,17 @@ impl<T> DerefMut for Reading<T> {
 }
 
 impl<T> Reading<T> {
+    /// Maps a value.
+    pub(crate) fn map(value: T, fresh: bool, overrun: bool) -> Self {
+        if overrun {
+            Self::Overrun(value)
+        } else if fresh {
+            Self::Fresh(value)
+        } else {
+            Self::Stale(value)
+        }
+    }
+
     /// Creates a stale reading.
     #[must_use]
     pub fn new_stale(value: T) -> Self {
