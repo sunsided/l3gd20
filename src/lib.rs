@@ -244,6 +244,7 @@ where
             #[allow(clippy::excessive_precision)]
             rate_noise_density: 0.03
                 * match bw {
+                    // TODO: Use bw.sqrt_hz_at(odr)
                     Bandwidth::Narrowest => match odr {
                         OutputDataRate::Hz95 => 3.5355339059327378,  // √(12.5 Hz)
                         OutputDataRate::Hz190 => 3.5355339059327378, // √(12.5 Hz)
