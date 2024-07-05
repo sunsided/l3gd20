@@ -293,12 +293,13 @@ where
         let mut buffer = [command, 0, 0, 0, 0, 0, 0];
         self.spi.transfer(&mut buffer)?;
 
-        let xlo = OutXLow::from_bits(buffer[0]);
-        let xhi = OutXHigh::from_bits(buffer[1]);
-        let ylo = OutYLow::from_bits(buffer[2]);
-        let yhi = OutYHigh::from_bits(buffer[3]);
-        let zlo = OutZLow::from_bits(buffer[4]);
-        let zhi = OutZHigh::from_bits(buffer[5]);
+        // skip the command byte [0].
+        let xlo = OutXLow::from_bits(buffer[1]);
+        let xhi = OutXHigh::from_bits(buffer[2]);
+        let ylo = OutYLow::from_bits(buffer[3]);
+        let yhi = OutYHigh::from_bits(buffer[4]);
+        let zlo = OutZLow::from_bits(buffer[5]);
+        let zhi = OutZHigh::from_bits(buffer[6]);
 
         let x = xhi + xlo;
         let y = yhi + ylo;
@@ -319,6 +320,7 @@ where
         let mut buffer = [command, 0, 0, 0, 0, 0, 0, 0, 0];
         self.spi.transfer(&mut buffer)?;
 
+        // skip the command byte at [0].
         let temp = TemperatureRegister::from_bits(buffer[1]);
         let status = StatusRegister::from_bits(buffer[2]);
         let xlo = OutXLow::from_bits(buffer[3]);
