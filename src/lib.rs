@@ -224,10 +224,10 @@ where
                 Sensitivity::D2000_11 => 2000,
             },
             sensitivity: match fs {
-                Sensitivity::D250 => 8.75,
-                Sensitivity::D500 => 17.5,
-                Sensitivity::D2000 => 70.0,
-                Sensitivity::D2000_11 => 70.0,
+                Sensitivity::D250 => 8.75 * 0.001,     // mdeg/1000
+                Sensitivity::D500 => 17.5 * 0.001,     // mdeg/1000
+                Sensitivity::D2000 => 70.0 * 0.001,    // mdeg/1000
+                Sensitivity::D2000_11 => 70.0 * 0.001, // mdeg/1000
             },
             zero_rate_noise: match fs {
                 Sensitivity::D250 => 10.0,
