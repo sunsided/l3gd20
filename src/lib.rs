@@ -177,6 +177,14 @@ where
         self.modify_register(|reg: ControlRegister1| reg.with_power_up(false))
     }
 
+    /// Enables the data ready interrupt.
+    pub fn enable_data_ready(&mut self, enabled: bool) -> Result<(), E>
+    where
+        CS: ChipSelectGuarded,
+    {
+        self.modify_register(|reg: ControlRegister3| reg.with_i2drdy(enabled))
+    }
+
     /// Sets the output data rate.
     pub fn set_odr(&mut self, data_rate: OutputDataRate) -> Result<(), E>
     where
