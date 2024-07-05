@@ -8,7 +8,7 @@ pub struct Characteristics {
     /// The sensitivity at the current selected full scale.
     pub sensitivity: f32,
 
-    /// The zero-rate noise level in degrees/second.
+    /// The zero-rate noise level in ±degrees/second.
     pub zero_rate_noise: f32,
 
     /// The temperature-related zero-rate noise level change, in degrees/second.

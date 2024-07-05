@@ -193,6 +193,77 @@ where
         self.modify_register(|reg: ControlRegister1| reg.with_bandwidth(bandwidth))
     }
 
+    /// Obtains sensor characteristics.
+    /// The results of this call depend on the current configuration of the sensor and should
+    /// be obtained when the sensor configuration was changed.
+    pub fn characteristics(&mut self) -> Result<Characteristics, E>
+    where
+        CS: ChipSelectGuarded,
+    {
+        let data = self.temp_raw()?;
+        let reg1 = self.read_register::<ControlRegister1>()?;
+        let reg4 = self.read_register::<ControlRegister4>()?;
+
+        let odr = reg1.output_data_rate();
+        let bw = reg1.bandwidth();
+        let fs = reg4.full_scale();
+
+        Ok(Characteristics {
+            full_scale: match fs {
+                Sensitivity::D250 => 250,
+                Sensitivity::D500 => 500,
+                Sensitivity::D2000 => 2000,
+                Sensitivity::D2000_11 => 2000,
+            },
+            sensitivity: match fs {
+                Sensitivity::D250 => 8.75,
+                Sensitivity::D500 => 17.5,
+                Sensitivity::D2000 => 70.0,
+                Sensitivity::D2000_11 => 70.0,
+            },
+            zero_rate_noise: match fs {
+                Sensitivity::D250 => 10.0,
+                Sensitivity::D500 => 15.0,
+                Sensitivity::D2000 => 75.0,
+                Sensitivity::D2000_11 => 75.0,
+            },
+            zero_rate_level_temp: match fs {
+                Sensitivity::D250 => 0.03 * f32::from(data),
+                Sensitivity::D500 => 0.03 * f32::from(data),
+                Sensitivity::D2000 => 0.04 * f32::from(data),
+                Sensitivity::D2000_11 => 0.05 * f32::from(data),
+            },
+            #[allow(clippy::excessive_precision)]
+            rate_noise_density: 0.03
+                * match bw {
+                    Bandwidth::Narrowest => match odr {
+                        OutputDataRate::Hz95 => 3.5355339059327378,  // √(12.5 Hz)
+                        OutputDataRate::Hz190 => 3.5355339059327378, // √(12.5 Hz)
+                        OutputDataRate::Hz380 => 4.47213595499958,   // √(20.0 Hz)
+                        OutputDataRate::Hz760 => 5.477225575051661,  // √(30.0 Hz)
+                    },
+                    Bandwidth::Narrow => match odr {
+                        OutputDataRate::Hz95 => 5.0,                // √(25.0 Hz)
+                        OutputDataRate::Hz190 => 5.0,               // √(25.0 Hz)
+                        OutputDataRate::Hz380 => 25.0,              // √(25.0 Hz)
+                        OutputDataRate::Hz760 => 5.916079783099616, // √(35.0 Hz)
+                    },
+                    Bandwidth::Medium => match odr {
+                        OutputDataRate::Hz95 => 5.0,                 // √(25.0 Hz)
+                        OutputDataRate::Hz190 => 7.0710678118654755, // √(50.0 Hz)
+                        OutputDataRate::Hz380 => 7.0710678118654755, // √(50.0 Hz)
+                        OutputDataRate::Hz760 => 7.0710678118654755, // √(50.0 Hz)
+                    },
+                    Bandwidth::Wide => match odr {
+                        OutputDataRate::Hz95 => 5.0,                // √(25.0 Hz)
+                        OutputDataRate::Hz190 => 8.366600265340756, // √(70.0 Hz)
+                        OutputDataRate::Hz380 => 10.0,              // √(100.0 Hz)
+                        OutputDataRate::Hz760 => 10.0,              // √(100.0 Hz)
+                    },
+                },
+        })
+    }
+
     /// Identifies this chip by querying the `WHO_AM_I` register.
     pub fn temp_raw(&mut self) -> Result<u8, E>
     where
