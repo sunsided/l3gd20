@@ -21,15 +21,15 @@ pub struct Characteristics {
     pub rate_noise_density: f32,
 }
 
-impl Default for Characteristics {s""
+impl Default for Characteristics {
     fn default() -> Self {
         #[allow(clippy::excessive_precision)]
         Self {
             full_scale: 250,
-            sensitivity: 8.75,
+            sensitivity: 8.75 * 0.001,
             zero_rate_noise: 10.0,
             zero_rate_level_temp: 0.03,
-            rate_noise_density: 0.03 * 3.5355339059327378
+            rate_noise_density: 0.03 * 3.5355339059327378,
         }
     }
 }
