@@ -193,6 +193,14 @@ where
         self.modify_register(|reg: ControlRegister1| reg.with_output_data_rate(data_rate))
     }
 
+    /// Sets the sensitivity.
+    pub fn set_sensitivity(&mut self, fs: Sensitivity) -> Result<(), E>
+    where
+        CS: ChipSelectGuarded,
+    {
+        self.modify_register(|reg: ControlRegister4| reg.with_full_scale(fs))
+    }
+
     /// Sets the output data rate.
     pub fn set_bandwidth(&mut self, bandwidth: Bandwidth) -> Result<(), E>
     where
