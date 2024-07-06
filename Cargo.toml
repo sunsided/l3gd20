@@ -19,7 +19,7 @@ defmt = ["dep:defmt", "l3gd20-registers/defmt"]
 chip-select = { version = "0.2.0", default-features = false, features = ["hal-0_2"] }
 defmt = { version = "0.3.8", optional = true }
 embedded-hal = "0.2.7"
-l3gd20-registers = "0.1.0"
+l3gd20-registers = "0.2.0"
 
 [dev-dependencies]
 test-format = "0.1.0"
