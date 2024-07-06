@@ -1,6 +1,6 @@
 [package]
 name = "l3gd20-ng"
-version = "0.1.0-alpha.1"
+version = "0.1.0"
 authors = ["Markus Mayer <widemeadows@gmail.com>"]
 categories = ["embedded", "hardware-support", "no-std"]
 description = "A platform agnostic SPI driver to interface with the L3GD2 gyroscope"
