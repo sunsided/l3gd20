@@ -126,6 +126,7 @@ fn negative_temperature() {
     let mut gyro = L3GD20SPI::new(FakeSpi::new(&model)).unwrap();
     model.borrow_mut().regs[0x26] = 0xFB;
     assert_eq!(gyro.temp_raw().unwrap(), -5);
+    assert_eq!(gyro.data_raw().unwrap().temperature, -5);
     assert!((gyro.characteristics().unwrap().zero_rate_level_temp + 0.15).abs() < 1e-6);
 }
 

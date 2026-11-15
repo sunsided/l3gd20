@@ -61,10 +61,17 @@ jobs:
         run: |
           # Lets a full re-run after a failed release job get past this job.
           version="${GITHUB_REF_NAME#v}"
-          if curl -sSf -A "${CRATE}-release-workflow" "https://crates.io/api/v1/crates/${CRATE}/${version}" > /dev/null; then
-            echo "${CRATE} ${version} is already on crates.io"
-            echo "exists=true" >> "${GITHUB_OUTPUT}"
-          fi
+          status="$(curl -sS -o /dev/null -w '%{http_code}' -A "${CRATE}-release-workflow" \
+            "https://crates.io/api/v1/crates/${CRATE}/${version}")"
+          case "${status}" in
+            200)
+              echo "${CRATE} ${version} is already on crates.io"
+              echo "exists=true" >> "${GITHUB_OUTPUT}" ;;
+            404) ;;
+            *)
+              echo "::error::crates.io returned HTTP ${status}; re-run when it is reachable"
+              exit 1 ;;
+          esac
       - name: Authenticate with crates.io
         if: steps.published.outputs.exists != 'true'
         id: auth
