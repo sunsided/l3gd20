@@ -61,7 +61,8 @@ jobs:
         run: |
           # Lets a full re-run after a failed release job get past this job.
           version="${GITHUB_REF_NAME#v}"
-          status="$(curl -sS -o /dev/null -w '%{http_code}' -A "${CRATE}-release-workflow" \
+          status="$(curl -sS --connect-timeout 10 --max-time 30 --retry 3 --retry-delay 5 \
+            -o /dev/null -w '%{http_code}' -A "${CRATE}-release-workflow" \
             "https://crates.io/api/v1/crates/${CRATE}/${version}")"
           case "${status}" in
             200)
