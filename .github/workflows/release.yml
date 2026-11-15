@@ -56,6 +56,8 @@ jobs:
         run: cargo test --all-features
       # crates.io rejects a version twice, so a full re-run fails here. After a failed
       # github-release job, use "Re-run failed jobs": it keeps this job's notes output.
+      # If this step fails after the upload went through, create the release by hand:
+      # gh release create vX.Y.Z --verify-tag --notes-file <the CHANGELOG section>
       - name: Authenticate with crates.io
         id: auth
         uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
