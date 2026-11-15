@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-15
+
+[0.2.0]: https://github.com/sunsided/l3gd20/releases/tag/v0.2.0
+
 ### Added
 
 - `Error` combines SPI errors with `Error::InvalidFifoMode` for reserved FIFO modes. It is
