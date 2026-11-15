@@ -3,6 +3,7 @@
 [![Crates.io][crates-image]][crates-link]
 [![Docs][docs-image]][docs-link]
 [![Build Status][build-image]][build-link]
+[![Coverage][codecov-image]][codecov-link]
 ![MSRV][msrv-image]
 [![EUPL 1.2 licensed][license-eupl-image]][license-eupl-link]
 [![Apache 2.0 licensed][license-apache-image]][license-apache-link]
@@ -15,7 +16,7 @@ board may still find this crate useful, among others.
 
 ## Implemented so far
 
-- Reading the gyroscope in SPI blocking mode
+- Reading the gyroscope in SPI blocking mode via [`embedded-hal`] 1.0 `SpiDevice`
 - Direct access to registers via [`l3gd20-registers`] structs and [`hardware-registers`] traits
 
 ## License
@@ -52,7 +53,11 @@ We abide by the [Contributor Covenant][cc] and ask that you do as well.
 
 [build-link]: https://github.com/sunsided/l3gd20/actions
 
-[msrv-image]: https://img.shields.io/badge/rustc-1.64+-blue.svg
+[codecov-image]: https://codecov.io/gh/sunsided/l3gd20/graph/badge.svg
+
+[codecov-link]: https://codecov.io/gh/sunsided/l3gd20
+
+[msrv-image]: https://img.shields.io/badge/rustc-1.85+-blue.svg
 
 [license-eupl-image]: https://img.shields.io/badge/license-EUPL_1.2-blue.svg
 
@@ -60,14 +65,16 @@ We abide by the [Contributor Covenant][cc] and ask that you do as well.
 
 [license-mit-image]: https://img.shields.io/badge/license-MIT-blue.svg
 
-[license-apache-link]: https://github.com/sunsided/l3gd20/blob/develop/LICENSE-APACHE
+[license-apache-link]: https://github.com/sunsided/l3gd20/blob/main/LICENSE-APACHE
 
-[license-mit-link]: https://github.com/sunsided/l3gd20/blob/develop/LICENSE-MIT
+[license-mit-link]: https://github.com/sunsided/l3gd20/blob/main/LICENSE-MIT
 
-[license-eupl-link]: https://github.com/sunsided/l3gd20/blob/develop/LICENSE-EUPL
+[license-eupl-link]: https://github.com/sunsided/l3gd20/blob/main/LICENSE-EUPL
 
 [cc]: https://contributor-covenant.org
 
 [`l3gd20-registers`]: https://crates.io/crates/l3gd20-registers
 
 [`hardware-registers`]: https://crates.io/crates/hardware-registers
+
+[`embedded-hal`]: https://crates.io/crates/embedded-hal

@@ -39,19 +39,19 @@ impl SensorData {
     /// Indicates whether all readings are fresh.
     #[must_use]
     pub fn fresh(&self) -> bool {
-        self.x.fresh() && self.y.stale() || self.z.stale()
+        self.x.fresh() && self.y.fresh() && self.z.fresh()
     }
 
     /// Indicates whether all readings are fresh or overrun.
     #[must_use]
     pub fn fresh_or_overrun(&self) -> bool {
-        self.x.fresh_or_overrun() && self.y.fresh_or_overrun() || self.z.fresh_or_overrun()
+        self.x.fresh_or_overrun() && self.y.fresh_or_overrun() && self.z.fresh_or_overrun()
     }
 
-    /// Indicates whether this is an overrun reading.
+    /// Indicates whether any reading is an overrun reading.
     #[must_use]
     pub fn overrun(&self) -> bool {
-        self.x.overrun() && self.y.overrun() || self.z.overrun()
+        self.x.overrun() || self.y.overrun() || self.z.overrun()
     }
 }
 
@@ -62,5 +62,26 @@ impl From<SensorData> for I16x3 {
             y: *value.y,
             z: *value.z,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn freshness_covers_all_axes() {
+        // Status: X and Y have new data, Z does not; Y overran.
+        let status = StatusRegister::from(0b0010_0011);
+        let data = SensorData::new(0, 1, 2, 3, status);
+        assert!(data.x.fresh() && data.y.overrun() && data.z.stale());
+        assert!(data.stale());
+        assert!(!data.fresh());
+        assert!(!data.fresh_or_overrun());
+        assert!(data.overrun());
+
+        let data = SensorData::new(0, 1, 2, 3, StatusRegister::from(0b0000_0111));
+        assert!(data.fresh() && data.fresh_or_overrun());
+        assert!(!data.stale() && !data.overrun());
     }
 }
