@@ -112,13 +112,12 @@ fn reserved_fifo_mode_is_an_error() {
 
     model.borrow_mut().regs[0x2E] = 0b0100_0011;
     let fifo = gyro.read_register::<FifoControlRegister>().unwrap();
-    assert_eq!(fifo.fifo_mode(), FifoMode::Stream);
+    assert_eq!(fifo.fifo_mode(), Ok(FifoMode::Stream));
 
     model.borrow_mut().regs[0x2E] = 0b1010_0000;
-    assert_eq!(
-        gyro.read_register::<FifoControlRegister>(),
-        Err(Error::InvalidFifoMode(InvalidFifoMode(0b101)))
-    );
+    let err = gyro.read_register::<FifoControlRegister>().unwrap_err();
+    assert!(matches!(err, Error::InvalidFifoMode(e) if e.mode() == 0b101));
+    assert_eq!(err.to_string(), "reserved FIFO mode 0b101");
 }
 
 #[test]

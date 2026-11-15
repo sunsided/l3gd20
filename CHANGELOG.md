@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- `Error` combines SPI errors with `Error::InvalidFifoMode` for reserved FIFO modes.
+- `Error` combines SPI errors with `Error::InvalidFifoMode` for reserved FIFO modes. It is
+  `#[non_exhaustive]` and implements `Display` and `core::error::Error`.
 - `L3GD20SPI::release` returns the SPI device.
 
 ### Changed

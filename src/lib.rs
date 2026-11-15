@@ -22,7 +22,7 @@ mod reading;
 mod sensor_data;
 
 use embedded_hal::spi::{Operation, SpiDevice};
-use l3gd20_registers::prelude::{SPIRegister, TryFromBits};
+use l3gd20_registers::prelude::{R1, RegisterAddress8, SPIRegister, TryFromBits};
 use l3gd20_registers::*;
 
 pub use characteristics::Characteristics;
@@ -271,7 +271,8 @@ where
         R: ReadableRegister,
         Error<SPI::Error>: From<<R as TryFromBits<u8>>::Error>,
     {
-        let command = SPI_READ | (*R::REGISTER_ADDRESS & Self::REG_ADDR_MASK);
+        let command = SPI_READ
+            | (*<R as SPIRegister<RegisterAddress8, R1>>::REGISTER_ADDRESS & Self::REG_ADDR_MASK);
         let mut buffer = [0];
         self.spi
             .transaction(&mut [Operation::Write(&[command]), Operation::Read(&mut buffer)])
@@ -286,7 +287,8 @@ where
         R: WritableRegister,
     {
         let byte = register.borrow().to_bits();
-        let command = *R::REGISTER_ADDRESS & Self::REG_ADDR_MASK;
+        let command =
+            *<R as SPIRegister<RegisterAddress8, R1>>::REGISTER_ADDRESS & Self::REG_ADDR_MASK;
         self.spi.write(&[command, byte]).map_err(Error::Spi)
     }
 
