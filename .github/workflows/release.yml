@@ -54,38 +54,12 @@ jobs:
       # rust.yml does not run on tags; crates.io versions are immutable.
       - name: Run tests
         run: cargo test --all-features
-      - name: Check whether the version is already published
-        id: published
-        env:
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          CRATE: l3gd20-ng
-        run: |
-          # Lets a re-run after a failed release job get past this job. On a first attempt an
-          # existing version means the tag was not bumped, so fail loudly instead.
-          version="${GITHUB_REF_NAME#v}"
-          status="$(curl -sS --connect-timeout 10 --max-time 30 --retry 3 --retry-delay 5 \
-            -o /dev/null -w '%{http_code}' -A "${CRATE}-release-workflow" \
-            "https://crates.io/api/v1/crates/${CRATE}/${version}")"
-          case "${status}" in
-            200)
-              if [ "${RUN_ATTEMPT}" -gt 1 ]; then
-                echo "::warning::${CRATE} ${version} is already on crates.io; skipping cargo publish on this re-run"
-                echo "exists=true" >> "${GITHUB_OUTPUT}"
-              else
-                echo "::error::${CRATE} ${version} is already on crates.io; bump the version before tagging"
-                exit 1
-              fi ;;
-            404) ;;
-            *)
-              echo "::error::crates.io returned HTTP ${status}; re-run when it is reachable"
-              exit 1 ;;
-          esac
+      # crates.io rejects a version twice, so a full re-run fails here. After a failed
+      # github-release job, use "Re-run failed jobs": it keeps this job's notes output.
       - name: Authenticate with crates.io
-        if: steps.published.outputs.exists != 'true'
         id: auth
         uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
       - name: Publish
-        if: steps.published.outputs.exists != 'true'
         run: cargo publish
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
