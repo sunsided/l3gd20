@@ -57,17 +57,24 @@ jobs:
       - name: Check whether the version is already published
         id: published
         env:
+          RUN_ATTEMPT: ${{ github.run_attempt }}
           CRATE: l3gd20-ng
         run: |
-          # Lets a full re-run after a failed release job get past this job.
+          # Lets a re-run after a failed release job get past this job. On a first attempt an
+          # existing version means the tag was not bumped, so fail loudly instead.
           version="${GITHUB_REF_NAME#v}"
           status="$(curl -sS --connect-timeout 10 --max-time 30 --retry 3 --retry-delay 5 \
             -o /dev/null -w '%{http_code}' -A "${CRATE}-release-workflow" \
             "https://crates.io/api/v1/crates/${CRATE}/${version}")"
           case "${status}" in
             200)
-              echo "${CRATE} ${version} is already on crates.io"
-              echo "exists=true" >> "${GITHUB_OUTPUT}" ;;
+              if [ "${RUN_ATTEMPT}" -gt 1 ]; then
+                echo "::warning::${CRATE} ${version} is already on crates.io; skipping cargo publish on this re-run"
+                echo "exists=true" >> "${GITHUB_OUTPUT}"
+              else
+                echo "::error::${CRATE} ${version} is already on crates.io; bump the version before tagging"
+                exit 1
+              fi ;;
             404) ;;
             *)
               echo "::error::crates.io returned HTTP ${status}; re-run when it is reachable"
