@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `SensorData::fresh` and `SensorData::fresh_or_overrun` now require all axes;
   `SensorData::overrun` reports whether any axis overran.
+- [**breaking**] `temp_raw` and `SensorData::temperature` are `i8`. The register holds a
+  two's complement value, so negative readings appeared as values above 127.
 - `Characteristics::rate_noise_density` was five times too high at 380 Hz with
   `Bandwidth::Narrow`.
 

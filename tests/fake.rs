@@ -122,6 +122,15 @@ fn reserved_fifo_mode_is_an_error() {
 }
 
 #[test]
+fn negative_temperature() {
+    let model = Model::new();
+    let mut gyro = L3GD20SPI::new(FakeSpi::new(&model)).unwrap();
+    model.borrow_mut().regs[0x26] = 0xFB;
+    assert_eq!(gyro.temp_raw().unwrap(), -5);
+    assert!((gyro.characteristics().unwrap().zero_rate_level_temp + 0.15).abs() < 1e-6);
+}
+
+#[test]
 fn characteristics_follow_configuration() {
     let model = Model::new();
     let mut gyro = L3GD20SPI::new(FakeSpi::new(&model)).unwrap();

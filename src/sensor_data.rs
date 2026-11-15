@@ -6,7 +6,7 @@ use l3gd20_registers::StatusRegister;
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct SensorData {
     /// The temperature reading
-    pub temperature: u8,
+    pub temperature: i8,
     /// The X-axis reading.
     pub x: Reading<i16>,
     /// The Y-axis reading.
@@ -17,7 +17,7 @@ pub struct SensorData {
 
 impl SensorData {
     /// Maps sensor readings into a [`SensorData`] structure.
-    pub fn new<S>(temperature: u8, x: i16, y: i16, z: i16, status: S) -> Self
+    pub fn new<S>(temperature: i8, x: i16, y: i16, z: i16, status: S) -> Self
     where
         S: core::borrow::Borrow<StatusRegister>,
     {

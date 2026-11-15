@@ -210,7 +210,7 @@ where
     }
 
     /// Reads the raw temperature from the `OUT_TEMP` register.
-    pub fn temp_raw(&mut self) -> Result<u8, Error<SPI::Error>> {
+    pub fn temp_raw(&mut self) -> Result<i8, Error<SPI::Error>> {
         let temp = self.read_register::<TemperatureRegister>()?;
         Ok(temp.temp())
     }
